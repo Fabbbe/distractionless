@@ -7,7 +7,7 @@ PyQt5
 '''
 
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPlainTextEdit, QHBoxLayout, QFrame, QMenu
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPlainTextEdit, QHBoxLayout, QFrame, QMenu, QFileDialog
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 
@@ -51,7 +51,7 @@ class App(QMainWindow):
 
         # Text feild custom context menu
         self.center_text.setContextMenuPolicy(Qt.CustomContextMenu)
-
+        self.center_text.customContextMenuRequested.connect(self.context_menu_event)
 
         # Create HBox and set it as layout
         self.widget.setLayout(QHBoxLayout())
@@ -70,8 +70,38 @@ class App(QMainWindow):
         TODO: Make it work
         '''
         text_to_save = self.center_text.toPlainText()
+        name = QFileDialog.getSaveFileName(self,"QFileDialog.getSaveFileName()","","All Files (*);;Text Files (*.txt)")[0]
 
+        with open(name, 'w') as save_file:
+            save_file.write(text_to_save)
 
+        self.setWindowTitle(name)
+
+    def context_menu_event(self, event):
+        '''
+        This function defines the context menu that
+        appears on right-click. 
+
+        '''
+
+        context_menu = QMenu(self)
+
+        copy_action = context_menu.addAction('Copy') # Copy to clipboard
+        paste_action = context_menu.addAction('Paste') # Paste clipboard
+        # Save file as...
+        save_as_action = context_menu.addAction('Save as...') 
+
+        action = context_menu.exec_(self.center_text.mapToGlobal(event))
+
+        # Copy and paste actions
+        if action == copy_action:
+            self.center_text.copy()
+        elif action == paste_action:
+            self.center_text.paste()
+
+        # File managment actions 
+        elif action == save_as_action:
+            self.save_text()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
