@@ -7,8 +7,8 @@ PyQt5
 '''
 
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPlainTextEdit, QVBoxLayout, QFrame, QMenu, QFileDialog, QLineEdit
-from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPlainTextEdit, QVBoxLayout, QFrame, QMenu, QFileDialog, QLineEdit, QShortcut
+from PyQt5.QtGui import QFont, QKeySequence
 from PyQt5.QtCore import Qt
 
 WINDOW_TITLE = 'Distraction Less'
@@ -35,6 +35,16 @@ class App(QMainWindow):
         self.resize(800, 600)
         self.move(400, 100)
         self.setWindowTitle(WINDOW_TITLE)
+
+        # == KEYBOARD SHORTCUTS ==
+
+        # Save, (Ctrl+S)
+        self.save_keyboard_shortcut = QShortcut(QKeySequence('Ctrl+S'), self)
+        self.save_keyboard_shortcut.activated.connect(self.save_text_file)
+
+        # Open file (Ctrl+O)
+        self.open_keyboard_shortcut = QShortcut(QKeySequence('Ctrl+O'), self)
+        self.open_keyboard_shortcut.activated.connect(self.open_text_file)
 
         # Create the central widget
 
@@ -74,7 +84,7 @@ class App(QMainWindow):
         self.center_text.setContextMenuPolicy(Qt.CustomContextMenu)
         self.center_text.customContextMenuRequested.connect(self.context_menu_event)
 
-        # Create HBox and set it as layout
+        # Create VBox and set it as layout
         self.widget.setLayout(QVBoxLayout())
 
         # Layout settings
@@ -121,18 +131,17 @@ class App(QMainWindow):
         '''
         This function defines the context menu that
         appears on right-click. 
-
         '''
 
         context_menu = QMenu(self)
 
-        copy_action = context_menu.addAction('Copy') # Copy to clipboard
-        paste_action = context_menu.addAction('Paste') # Paste clipboard
+        copy_action = context_menu.addAction('Copy\t(Ctrl+C)') # Copy to clipboard
+        paste_action = context_menu.addAction('Paste\t(Ctrl+V)') # Paste clipboard
 
         # Save file as...
-        save_as_action = context_menu.addAction('Save as...') 
+        save_as_action = context_menu.addAction('Save as...\t(Ctrl+S)') 
         # Open file
-        open_action = context_menu.addAction('Open file')
+        open_action = context_menu.addAction('Open file\t(Ctrl+O)')
 
         action = context_menu.exec_(self.center_text.mapToGlobal(event))
 
@@ -160,4 +169,3 @@ if __name__ == '__main__':
     w = App()
     w.show()
     sys.exit(app.exec_())
-    
