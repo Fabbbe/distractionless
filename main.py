@@ -6,10 +6,15 @@ A distractionless writer made using
 PyQt5
 '''
 
+import os
 import sys
+import markdown
+import tempfile
+import webbrowser
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPlainTextEdit, QVBoxLayout, QFrame, QMenu, QFileDialog, QLineEdit, QShortcut
 from PyQt5.QtGui import QFont, QKeySequence
 from PyQt5.QtCore import Qt
+
 
 WINDOW_TITLE = 'Distraction Less'
 FONT_SIZE = 14
@@ -46,17 +51,21 @@ class App(QMainWindow):
         self.open_keyboard_shortcut = QShortcut(QKeySequence('Ctrl+O'), self)
         self.open_keyboard_shortcut.activated.connect(self.open_text_file)
 
+        # Export to browser
+        self.export_keyboard_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.CTRL + Qt.Key_E), self)
+        self.export_keyboard_shortcut.activated.connect(self.export_to_browser)
+
         # Create the central widget
 
         self.widget = QWidget(self)
         self.widget.setStyleSheet('background-color:'+ BACKGROUND_COLOR +';')
 
         # Create default text font
-        self.input_font = QFont('Mono')
+        self.input_font = QFont('Monospace')
         self.input_font.setPointSize(FONT_SIZE)
 
         # Create info bar font
-        self.info_font = QFont('Mono')
+        self.info_font = QFont('Monospace')
         self.info_font.setPointSize(INFO_FONT_SIZE)
 
         # Create LineEdit for the top info bar
@@ -98,9 +107,11 @@ class App(QMainWindow):
     def save_text_file(self):
         '''
         Saves the written text to a file
+
+        TODO: make exception if no file name is given
         '''
         text_to_save = self.center_text.toPlainText()
-        name = QFileDialog.getSaveFileName(self,'Save as...','','All Files (*);;Text Files (*.txt)')[0]
+        name = QFileDialog.getSaveFileName(self,'Save as...',self.working_file_name,'All Files (*);;Text Files (*.txt)')[0]
 
         with open(name, 'w') as save_file:
             save_file.write(text_to_save)
@@ -113,7 +124,7 @@ class App(QMainWindow):
 
     def open_text_file(self):
         ''' Opens a file and '''
-        name = QFileDialog.getOpenFileName(self,'Open a File','','All Files (*);;Text Files (*.txt)')[0]
+        name = QFileDialog.getOpenFileName(self,'Open a File',self.working_file_name,'All Files (*);;Text Files (*.txt)')[0]
 
         with open(name, 'r') as new_file:
             new_text = new_file.read()
@@ -125,6 +136,27 @@ class App(QMainWindow):
         
         # Update info bar
         self.update_top_info_bar()
+
+    def export_to_browser(self):
+        # Grab the raw markdown text
+        markdown_text = self.center_text.toPlainText()
+        # Convert it to html using the markdown module
+        markdown_html = markdown.markdown(markdown_text)
+        
+        # Create tempfile for the html
+        # The tuple consists of file descriptor and path
+        temp_file_descriptor, temp_file_path = tempfile.mkstemp(suffix='.html',text=True)
+
+        # Write html to temp file
+        os.write(temp_file_descriptor, markdown_html.encode(encoding='utf-8'))
+
+        # Open the temp file in the browser
+        webbrowser.open('file://' + os.path.realpath(temp_file_path))
+
+        # Close the temp file
+        os.close(temp_file_descriptor)
+
+        
 
 
     def context_menu_event(self, event):
@@ -143,6 +175,9 @@ class App(QMainWindow):
         # Open file
         open_action = context_menu.addAction('Open file\t(Ctrl+O)')
 
+        # Export and open in browser
+        export_action = context_menu.addAction('Export to browser\t(Ctrl+Shift+E)')
+
         action = context_menu.exec_(self.center_text.mapToGlobal(event))
 
         # Copy and paste actions
@@ -156,6 +191,10 @@ class App(QMainWindow):
             self.save_text_file()
         elif action == open_action:
             self.open_text_file()
+
+        # Markdown actions
+        elif action == export_action:
+            self.export_to_browser()
 
     def update_top_info_bar(self):
         if self.working_file_name != '':
