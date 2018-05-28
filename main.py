@@ -17,7 +17,7 @@ from PyQt5.QtCore import Qt
 
 
 WINDOW_TITLE = 'Distraction Less'
-FONT_SIZE = 14
+FONT_SIZE = 15
 INFO_FONT_SIZE = 11
 MAXIMUM_WIDTH = 980
 BACKGROUND_COLOR = '#f3f3e0'
@@ -61,11 +61,11 @@ class App(QMainWindow):
         self.widget.setStyleSheet('background-color:'+ BACKGROUND_COLOR +';')
 
         # Create default text font
-        self.input_font = QFont('Monospace')
+        self.input_font = QFont('Inconsolata, Monaco, Consolas, Courier New, Courier')
         self.input_font.setPointSize(FONT_SIZE)
 
         # Create info bar font
-        self.info_font = QFont('Monospace')
+        self.info_font = QFont('Inconsolata, Monaco, Consolas, Courier New, Courier')
         self.info_font.setPointSize(INFO_FONT_SIZE)
 
         # Create LineEdit for the top info bar
@@ -108,7 +108,7 @@ class App(QMainWindow):
         '''
         Saves the written text to a file
 
-        TODO: make exception if no file name is given
+        TODO: 
         '''
         text_to_save = self.center_text.toPlainText()
         name = QFileDialog.getSaveFileName(self,'Save as...',self.working_file_name,'All Files (*);;Text Files (*.txt)')[0]
