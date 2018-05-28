@@ -11,6 +11,7 @@ import sys
 import markdown
 import tempfile
 import webbrowser
+from distractionless_utils import *
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPlainTextEdit, QVBoxLayout, QFrame, QMenu, QFileDialog, QLineEdit, QShortcut
 from PyQt5.QtGui import QFont, QKeySequence
 from PyQt5.QtCore import Qt
@@ -41,32 +42,16 @@ class App(QMainWindow):
         self.move(400, 100)
         self.setWindowTitle(WINDOW_TITLE)
 
-        # == KEYBOARD SHORTCUTS ==
-
-        # Save, (Ctrl+S)
-        self.save_keyboard_shortcut = QShortcut(QKeySequence('Ctrl+S'), self)
-        self.save_keyboard_shortcut.activated.connect(self.save_text_file)
-
-        # Open file (Ctrl+O)
-        self.open_keyboard_shortcut = QShortcut(QKeySequence('Ctrl+O'), self)
-        self.open_keyboard_shortcut.activated.connect(self.open_text_file)
-
-        # Export to browser
-        self.export_keyboard_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.CTRL + Qt.Key_E), self)
-        self.export_keyboard_shortcut.activated.connect(self.export_to_browser)
-
         # == Widgets and Layout ==
         # Create the central widget
         self.widget = QWidget(self)
         self.widget.setStyleSheet('background-color:'+ BACKGROUND_COLOR +';')
 
         # Create default text font
-        self.input_font = QFont('Monospace')
-        self.input_font.setPointSize(FONT_SIZE)
+        self.input_font = get_monospaced_font(FONT_SIZE)
 
         # Create info bar font
-        self.info_font = QFont('Monospace')
-        self.info_font.setPointSize(INFO_FONT_SIZE)
+        self.info_font = get_monospaced_font(INFO_FONT_SIZE)
 
         # Create LineEdit for the top info bar
         # This bar is for displaying info about
@@ -104,15 +89,34 @@ class App(QMainWindow):
 
         self.setCentralWidget(self.widget)
 
+        # Init keyboard shortcuts
+        self.InitKeyboard()
+
+    def InitKeyboard(self):
+        ''' Init keyboard shortcuts '''
+        # == KEYBOARD SHORTCUTS ==
+
+        # Save, (Ctrl+S)
+        self.save_keyboard_shortcut = QShortcut(QKeySequence('Ctrl+S'), self)
+        self.save_keyboard_shortcut.activated.connect(self.save_text_file)
+
+        # Open file (Ctrl+O)
+        self.open_keyboard_shortcut = QShortcut(QKeySequence('Ctrl+O'), self)
+        self.open_keyboard_shortcut.activated.connect(self.open_text_file)
+
+        # Export to browser
+        self.export_keyboard_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.CTRL + Qt.Key_E), self)
+        self.export_keyboard_shortcut.activated.connect(self.export_to_browser)
+
+
     def save_text_file(self):
         '''
         Saves the written text to a file
         '''
         name = QFileDialog.getSaveFileName(self,'Save as...',self.working_file_name,'All Files (*);;Text Files (*.txt)')[0]
-        
-        text_to_save = self.center_text.toPlainText()
 
         if name:
+            text_to_save = self.center_text.toPlainText()
             with open(name, 'w') as save_file:
                 save_file.write(text_to_save)
 
