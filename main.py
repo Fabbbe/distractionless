@@ -113,29 +113,31 @@ class App(QMainWindow):
         text_to_save = self.center_text.toPlainText()
         name = QFileDialog.getSaveFileName(self,'Save as...',self.working_file_name,'All Files (*);;Text Files (*.txt)')[0]
 
-        with open(name, 'w') as save_file:
-            save_file.write(text_to_save)
+        if name:
+            with open(name, 'w') as save_file:
+                save_file.write(text_to_save)
 
-        # Show the new file path
-        self.working_file_name = name
+            # Show the new file path
+            self.working_file_name = name
 
-        # Update info bar
-        self.update_top_info_bar()
+            # Update info bar
+            self.update_top_info_bar()
 
     def open_text_file(self):
         ''' Opens a file and '''
         name = QFileDialog.getOpenFileName(self,'Open a File',self.working_file_name,'All Files (*);;Text Files (*.txt)')[0]
-
-        with open(name, 'r') as new_file:
-            new_text = new_file.read()
-
-        self.center_text.setPlainText(new_text)
         
-        # Set current file name to the opened one.
-        self.working_file_name = name
+        if name:
+            with open(name, 'r') as new_file:
+                new_text = new_file.read()
+
+            self.center_text.setPlainText(new_text)
         
-        # Update info bar
-        self.update_top_info_bar()
+            # Set current file name to the opened one.
+            self.working_file_name = name
+            
+            # Update info bar
+            self.update_top_info_bar()
 
     def export_to_browser(self):
         # Grab the raw markdown text
