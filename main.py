@@ -55,8 +55,8 @@ class App(QMainWindow):
         self.export_keyboard_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.CTRL + Qt.Key_E), self)
         self.export_keyboard_shortcut.activated.connect(self.export_to_browser)
 
+        # == Widgets and Layout ==
         # Create the central widget
-
         self.widget = QWidget(self)
         self.widget.setStyleSheet('background-color:'+ BACKGROUND_COLOR +';')
 
@@ -107,11 +107,10 @@ class App(QMainWindow):
     def save_text_file(self):
         '''
         Saves the written text to a file
-
-        TODO: make exception if no file name is given
         '''
-        text_to_save = self.center_text.toPlainText()
         name = QFileDialog.getSaveFileName(self,'Save as...',self.working_file_name,'All Files (*);;Text Files (*.txt)')[0]
+        
+        text_to_save = self.center_text.toPlainText()
 
         with open(name, 'w') as save_file:
             save_file.write(text_to_save)
@@ -155,9 +154,6 @@ class App(QMainWindow):
 
         # Close the temp file
         os.close(temp_file_descriptor)
-
-        
-
 
     def context_menu_event(self, event):
         '''
