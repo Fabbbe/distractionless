@@ -88,7 +88,7 @@ class App(QMainWindow):
         self.widget.layout().setAlignment(Qt.AlignCenter)
 
         self.setCentralWidget(self.widget)
-
+        
         # Init keyboard shortcuts
         self.InitKeyboard()
 
@@ -107,6 +107,10 @@ class App(QMainWindow):
         # Export to browser
         self.export_keyboard_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.CTRL + Qt.Key_E), self)
         self.export_keyboard_shortcut.activated.connect(self.export_to_browser)
+
+        # Fullscreen toggle (F11)
+        self.fullscreen_keyboard_shortcut = QShortcut(QKeySequence(Qt.Key_F11), self)
+        self.fullscreen_keyboard_shortcut.activated.connect(self.toggle_fullscreen)
 
 
     def save_text_file(self):
@@ -204,6 +208,13 @@ class App(QMainWindow):
         else:
             self.top_info_bar.setText('New File')
 
+    def toggle_fullscreen(self):
+        ''' Toggles fullscreen on and off '''
+
+        if self.isFullScreen():
+            self.showNormal()
+        else:
+            self.showFullScreen()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
