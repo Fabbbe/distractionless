@@ -127,7 +127,7 @@ class App(QMainWindow):
             name = QFileDialog.getSaveFileName(self,'Save as...',self.working_file_name,'All Files (*);;Text Files (*.txt)')[0]
 
             if name:
-                with open(name, 'w') as save_file:
+                with open(name, 'w', encoding='utf-8') as save_file:
                     save_file.write(text_to_save)
 
                 # Show the new file path
@@ -146,7 +146,7 @@ class App(QMainWindow):
         name = QFileDialog.getOpenFileName(self,'Open a File',self.working_file_name,'All Files (*);;Text Files (*.txt);;HTML Files (*.html)')[0]
         
         if name:
-            with open(name, 'r') as new_file:
+            with open(name, 'r', encoding='utf-8') as new_file:
                 new_text = new_file.read()
 
             self.center_text.setPlainText(new_text)
