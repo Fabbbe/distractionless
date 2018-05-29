@@ -10,3 +10,9 @@ Distractionless depends on:
 
 - `PyQt5`
 - `Markdown`
+
+## Install
+1. git clone https://github.com/Fabbbe/distractionless.git
+2. shift + rightclick in folder → Open in terminal
+3. pip install PyQt5 Markdown
+4. python main.py
