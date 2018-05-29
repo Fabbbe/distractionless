@@ -18,7 +18,7 @@ from PyQt5.QtCore import Qt
 
 
 WINDOW_TITLE = 'Distraction Less'
-FONT_SIZE = 15
+FONT_SIZE = 14
 INFO_FONT_SIZE = 11
 MAXIMUM_WIDTH = 980
 BACKGROUND_COLOR = '#f3f3e0'
