@@ -121,7 +121,7 @@ class App(QMainWindow):
         '''
         text_to_save = self.center_text.toPlainText()
         if self.working_file_name:
-            with open(self.working_file_name, 'w') as save_file:
+            with open(self.working_file_name, 'w', encoding='utf-8') as save_file:
                 save_file.write(text_to_save)
         else:
             name = QFileDialog.getSaveFileName(self,'Save as...',self.working_file_name,'All Files (*);;Text Files (*.txt)')[0]
