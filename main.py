@@ -143,7 +143,7 @@ class App(QMainWindow):
 
     def open_text_file(self):
         ''' Opens a file and '''
-        name = QFileDialog.getOpenFileName(self,'Open a File',self.working_file_name,'All Files (*);;Text Files (*.txt)')[0]
+        name = QFileDialog.getOpenFileName(self,'Open a File',self.working_file_name,'All Files (*);;Text Files (*.txt);;HTML Files (*.html)')[0]
         
         if name:
             with open(name, 'r') as new_file:
