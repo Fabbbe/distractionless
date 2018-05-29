@@ -100,6 +100,9 @@ class App(QMainWindow):
         self.save_keyboard_shortcut = QShortcut(QKeySequence('Ctrl+S'), self)
         self.save_keyboard_shortcut.activated.connect(self.save_text_file)
 
+        self.saveas_keyboard_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.CTRL + Qt.Key_S),self)
+        self.saveas_keyboard_shortcut.activated.connect(self.saveas_text_file)
+
         # Open file (Ctrl+O)
         self.open_keyboard_shortcut = QShortcut(QKeySequence('Ctrl+O'), self)
         self.open_keyboard_shortcut.activated.connect(self.open_text_file)
@@ -112,23 +115,31 @@ class App(QMainWindow):
         self.fullscreen_keyboard_shortcut = QShortcut(QKeySequence(Qt.Key_F11), self)
         self.fullscreen_keyboard_shortcut.activated.connect(self.toggle_fullscreen)
 
-
     def save_text_file(self):
         '''
         Saves the written text to a file
         '''
-        name = QFileDialog.getSaveFileName(self,'Save as...',self.working_file_name,'All Files (*);;Text Files (*.txt)')[0]
-
-        if name:
-            text_to_save = self.center_text.toPlainText()
-            with open(name, 'w') as save_file:
+        text_to_save = self.center_text.toPlainText()
+        if self.working_file_name:
+            with open(self.working_file_name, 'w') as save_file:
                 save_file.write(text_to_save)
+        else:
+            name = QFileDialog.getSaveFileName(self,'Save as...',self.working_file_name,'All Files (*);;Text Files (*.txt)')[0]
 
-            # Show the new file path
-            self.working_file_name = name
+            if name:
+                with open(name, 'w') as save_file:
+                    save_file.write(text_to_save)
 
-            # Update info bar
-            self.update_top_info_bar()
+                # Show the new file path
+                self.working_file_name = name
+
+                # Update info bar
+                self.update_top_info_bar()
+
+    def saveas_text_file(self):
+        # Set file name to '' to save as new file
+        self.working_file_name = ''
+        self.save_text_file()
 
     def open_text_file(self):
         ''' Opens a file and '''
@@ -176,8 +187,10 @@ class App(QMainWindow):
         copy_action = context_menu.addAction('Copy\t(Ctrl+C)') # Copy to clipboard
         paste_action = context_menu.addAction('Paste\t(Ctrl+V)') # Paste clipboard
 
+        # Save file
+        save_action = context_menu.addAction('Save\t(Ctrl+S)')
         # Save file as...
-        save_as_action = context_menu.addAction('Save as...\t(Ctrl+S)') 
+        save_as_action = context_menu.addAction('Save as...\t(Ctrl+Shift+S)') 
         # Open file
         open_action = context_menu.addAction('Open file\t(Ctrl+O)')
 
@@ -194,6 +207,8 @@ class App(QMainWindow):
 
         # File managment actions 
         elif action == save_as_action:
+            self.saveas_text_file()
+        elif action == save_action:
             self.save_text_file()
         elif action == open_action:
             self.open_text_file()
